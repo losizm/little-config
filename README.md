@@ -2,6 +2,8 @@
 
 The Scala library that provides extension methods to _com.typesafe.config_.
 
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.losizm/little-config_2.12.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.github.losizm%22%20AND%20a:%22little-config_2.12%22)
+
 ## Getting Started
 To use **little-config**, start by adding it to your project:
 
@@ -54,7 +56,7 @@ implicit val getUser: GetValue[User] = (config, path) => {
   User(user.getInt("id"), user.getString("name"))
 }
 
-// Build a Config
+// Build Config
 val config = ConfigFactory.parseString("""user { id = 0,  name = root }""")
 
 // Get User from Config
