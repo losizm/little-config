@@ -1,12 +1,12 @@
 name := "little-config"
-version := "0.1.0"
+version := "0.2.0-SNAPSHOT"
 organization := "com.github.losizm"
 
 scalaVersion := "2.12.6"
 scalacOptions ++= Seq("-deprecation", "-feature", "-Xcheckinit")
 
 libraryDependencies ++= Seq(
-  "com.typesafe"  %  "config"    % "1.3.3",
+  "com.typesafe"  %  "config"    % "1.3.3" % "provided",
   "org.scalatest" %% "scalatest" % "3.0.5" % "test"
 )
 
