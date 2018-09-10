@@ -20,6 +20,7 @@ import java.time.{ Duration, Period }
 import scala.collection.convert.ImplicitConversionsToScala.`iterable AsScalaIterable`
 import scala.collection.generic.CanBuildFrom
 import scala.language.higherKinds
+import scala.reflect.ClassTag
 import scala.util.Try
 
 import com.typesafe.config.{ Config, ConfigMemorySize }
@@ -62,6 +63,15 @@ object Implicits {
   implicit def GetCollection[T, M[T]](implicit gv: GetValue[T], build: CanBuildFrom[Nothing, T, M[T]]) = new GetValue[M[T]] {
     def apply(config: Config, path: String): M[T] =
       config.getList(path).map(x => gv(x.atKey("x"), "x")).to[M]
+  }
+
+  private val enumClass = classOf[Enum[_]]
+  private val enumValueOf = enumClass.getMethod("valueOf", classOf[Class[_]], classOf[String])
+
+  /** Gets Enum from Config. */
+  implicit def GetEnum[T <: Enum[T]](implicit ctag: ClassTag[T]) = new GetValue[T] {
+    def apply(config: Config, path: String): T =
+      enumValueOf.invoke(enumClass, ctag.runtimeClass, config.getString(path)).asInstanceOf[T]
   }
 
   /** Adds extension methods to {@code com.typesafe.config.Config}. */
