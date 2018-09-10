@@ -9,24 +9,24 @@ To use **little-config**, start by adding it to your project:
 
 * sbt
 ```scala
-libraryDependencies += "com.github.losizm" %% "little-config" % "0.1.0"
+libraryDependencies += "com.github.losizm" %% "little-config" % "0.2.0"
 ```
 * Gradle
 ```groovy
-compile group: 'com.github.losizm', name: 'little-config_2.12', version: '0.1.0'
+compile group: 'com.github.losizm', name: 'little-config_2.12', version: '0.2.0'
 ```
 * Maven
 ```xml
 <dependency>
   <groupId>com.github.losizm</groupId>
   <artifactId>little-config_2.12</artifactId>
-  <version>0.1.0</version>
+  <version>0.2.0</version>
 </dependency>
 ```
 
 ### Using an implementation of com.typesafe.config
-**little-config** is compiled with _com.typesafe.config_ 1.3.3, and you must add
-the implementation of _com.typesafe.config_ to your project.
+**little-config** is compiled with _com.typesafe.config_ 1.3.x, and you must add
+an implementation to your project.
 
 So, for example, include the following in your sbt build to add it as a
 dependency:
@@ -171,6 +171,29 @@ val avgUsage = config.getTry[Double]("avgUsage")
 val timeout = config.getTry[Duration]("timeout")
 val retention = config.getTry[Period]("retention")
 val storage = config.getTry[ConfigMemorySize]("storage")
+```
+
+### Getting Java Enum Value from Config
+
+And, as a final taste, **little-config** provides an implementation of
+`GetValue` for getting Java enums. This gives you the power of all other
+features discussed, such as getting a list of enums, getting an optional enum,
+getting an enum with a default value, and trying to an enum.
+
+```scala
+import java.time.Month
+import Month._
+
+val config = ConfigFactory.parseString("""
+  first = JANUARY
+  summer = [JUNE, JULY, AUGUST]
+""")
+
+val first = config.get[Month]("first")
+val summer = config.get[List[Month]]("summer")
+val last = config.getOption[Month]("last")
+val fall = config.getOrElse("fall", Seq(SEPTEMBER, OCTOBER, NOVEMBER))
+val vacation = config.getTry[Month]("vacation") // :(
 ```
 
 ## License
