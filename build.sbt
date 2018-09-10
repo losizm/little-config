@@ -1,5 +1,5 @@
 name := "little-config"
-version := "0.2.0-SNAPSHOT"
+version := "0.2.0"
 organization := "com.github.losizm"
 
 scalaVersion := "2.12.6"
