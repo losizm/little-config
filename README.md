@@ -74,10 +74,10 @@ val config = ConfigFactory.parseString("""
   }
 """)
 
-// Get a sequence of users
+// Get sequence of users
 val users = config.get[Seq[User]]("system.users")
 
-// Or choose just about any other type of collection
+// Or get just about any other type of collection
 val listOfUsers = config.get[List[User]]("system.users")
 val setOfUsers = config.get[Set[User]]("system.users")
 val iterOfUsers = config.get[Iterator[User]]("system.users")
@@ -92,7 +92,7 @@ implicitly adds the `getOption[T]` method to `Config`.
 ```scala
 val config = ConfigFactory.parseString("""user { id = 0,  name = root }""")
 
-// Get a user or not
+// Get user or not
 val some = config.getOption[User]("user")
 val none = config.getOption[User]("guest")
 ```
@@ -110,12 +110,12 @@ val config = ConfigFactory.parseString("""
 // Get optional values
 val id = config.getOption[Int]("id")
 val name = config.getOption[String]("name")
-val key = config.getOption[Long]("key")
 val enabled = config.getOption[Boolean]("enabled")
-val storage = config.getOption[ConfigMemorySize]("storage")
+val key = config.getOption[Long]("key")
 val avgUsage = config.getOption[Double]("avgUsage")
 val timeout = config.getOption[Duration]("timeout")
 val retention = config.getOption[Period]("retention")
+val storage = config.getOption[ConfigMemorySize]("storage")
 ```
 
 Or, if you rather provide a default value, there's a method for that too.
@@ -123,16 +123,16 @@ Or, if you rather provide a default value, there's a method for that too.
 ```scala
 val config = ConfigFactory.parseString("""user { id = 0,  name = root }""")
 
-// Get value or return supplied default
+// Get value or supplied default
 val user = config.getOrElse("user", User(500, "guest"))
 val id = config.getOrElse("id", 500)
 val name = config.getOrElse("name", "guest")
-val key = config.getOrElse("key", 0L)
 val enabled = config.getOrElse("enabled", false)
-val storage = config.getOrElse("storage", ConfigMemorySize.ofBytes(0))
+val key = config.getOrElse("key", 0L)
 val avgUsage = config.getOrElse("avgUsage", 0.0)
 val timeout = config.getOrElse("timeout", Duration.ofSeconds(10))
 val retention = config.getOrElse("retention", Period.ofWeeks(1))
+val storage = config.getOrElse("storage", ConfigMemorySize.ofBytes(0))
 ```
 
 In all fairness, there are other ways to achieve this, such as defining default
@@ -142,14 +142,14 @@ providing a default when getting the value can be a nice alternative at times.
 ### Trying to Get Value from Config
 
 The `getTry[T]` method is added to `Config` to work in much the same way as
-getting an optional value. Get wraps the value in `Success` if the path is
-present and the value can be converted to the requested type, or otherwise a
+getting an optional value. It wraps the value in `Success` if the path is
+present and if the value can be converted to the requested type, or otherwise a
 `Failure` is returned.
 
 ```scala
 val config = ConfigFactory.parseString("""user { id = "Oops!",  name = root }""")
 
-// Get value or return supplied default
+// Try to get user
 val user = config.getTry[User]("user")
 ```
 
@@ -160,15 +160,15 @@ val config = ConfigFactory.parseString("""
   { id = 500, enabled = false, storage = 2G, timeout = 10s }
 """)
 
-// Get optional values
+// Try to get values
 val id = config.getTry[Int]("id")
 val name = config.getTry[String]("name")
-val key = config.getTry[Long]("key")
 val enabled = config.getTry[Boolean]("enabled")
-val storage = config.getTry[ConfigMemorySize]("storage")
+val key = config.getTry[Long]("key")
 val avgUsage = config.getTry[Double]("avgUsage")
 val timeout = config.getTry[Duration]("timeout")
 val retention = config.getTry[Period]("retention")
+val storage = config.getTry[ConfigMemorySize]("storage")
 ```
 
 ## License
