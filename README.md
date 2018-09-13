@@ -178,7 +178,7 @@ val storage = config.getTry[ConfigMemorySize]("storage")
 And, as a final taste, **little-config** provides an implementation of
 `GetValue` for getting Java enums. This gives you the power of all other
 features discussed, such as getting a list of enums, getting an optional enum,
-getting an enum with a default value, and trying to an enum.
+getting an enum with a default value, and trying to get an enum.
 
 ```scala
 import java.time.Month
