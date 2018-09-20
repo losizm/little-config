@@ -9,18 +9,18 @@ To use **little-config**, start by adding it to your project:
 
 * sbt
 ```scala
-libraryDependencies += "com.github.losizm" %% "little-config" % "0.2.0"
+libraryDependencies += "com.github.losizm" %% "little-config" % "0.3.0"
 ```
 * Gradle
 ```groovy
-compile group: 'com.github.losizm', name: 'little-config_2.12', version: '0.2.0'
+compile group: 'com.github.losizm', name: 'little-config_2.12', version: '0.3.0'
 ```
 * Maven
 ```xml
 <dependency>
   <groupId>com.github.losizm</groupId>
   <artifactId>little-config_2.12</artifactId>
-  <version>0.2.0</version>
+  <version>0.3.0</version>
 </dependency>
 ```
 
@@ -40,18 +40,18 @@ Here's a taste of what **little-config** offers.
 
 ### Getting Custom Value from Config
 
-**little-config** is powered by a single trait, `GetValue`. You provide an
+**little-config** is powered by a single trait, `GetConfigValue`. You provide an
 implementation of this to get a custom value from `Config`.
 
 ```scala
 import com.typesafe.config.{ Config, ConfigFactory }
-import little.config.GetValue
+import little.config.GetConfigValue
 import little.config.Implicits._ // Unleash the power
 
 case class User(id: Int, name: String)
 
 // Define how to get User from Config
-implicit val getUser: GetValue[User] = (config, path) => {
+implicit val getUser: GetConfigValue[User] = (config, path) => {
   val user = config.getConfig(path)
   User(user.getInt("id"), user.getString("name"))
 }
@@ -62,9 +62,10 @@ val config = ConfigFactory.parseString("""user { id = 0,  name = root }""")
 // Get User from Config
 val user = config.get[User]("user")
 ```
-A special implementation of `GetValue` is available for converting a
+A special implementation of `GetConfigValue` is available for converting a
 `ConfigList` to a collection of custom values. For example, if you define
-`GetValue[User]`, you're automagically provided `GetValue[Seq[User]]`.
+`GetConfigValue[User]`, you're automagically provided
+`GetConfigValue[Seq[User]]`.
 
 ```scala
 val config = ConfigFactory.parseString("""
@@ -176,7 +177,7 @@ val storage = config.getTry[ConfigMemorySize]("storage")
 ### Getting Java Enum Value from Config
 
 And, as a final taste, **little-config** provides an implementation of
-`GetValue` for getting Java enums. This gives you the power of all other
+`GetConfigValue` for getting Java enums. This gives you the power of all other
 features discussed, such as getting a list of enums, getting an optional enum,
 getting an enum with a default value, and trying to get an enum.
 
