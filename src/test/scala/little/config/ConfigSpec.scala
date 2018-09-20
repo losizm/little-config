@@ -44,7 +44,7 @@ class ConfigSpec extends FlatSpec {
   case class User(id: Int, name: String)
 
   // Define how to get User from Config
-  implicit val getUser: GetValue[User] = (config, path) => {
+  implicit val getUser: GetConfigValue[User] = (config, path) => {
     val user = config.getConfig(path)
     User(user.getInt("id"), user.getString("name"))
   }

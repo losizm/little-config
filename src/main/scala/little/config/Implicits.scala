@@ -28,65 +28,67 @@ import com.typesafe.config.{ Config, ConfigMemorySize }
 /** Provides implicit values and types. */
 object Implicits {
   /** Gets String from Config. */
-  implicit val GetString: GetValue[String] =
+  implicit val getConfigValueAsString: GetConfigValue[String] =
     (config, path) => config.getString(path)
 
   /** Gets Boolean from Config. */
-  implicit val GetBoolean: GetValue[Boolean] =
+  implicit val getConfigValueAsBoolean: GetConfigValue[Boolean] =
     (config, path) => config.getBoolean(path)
 
   /** Gets Int from Config. */
-  implicit val GetInt: GetValue[Int] =
+  implicit val getConfigValueAsInt: GetConfigValue[Int] =
     (config, path) => config.getInt(path)
 
   /** Gets Long from Config. */
-  implicit val GetLong: GetValue[Long] =
+  implicit val getConfigValueAsLong: GetConfigValue[Long] =
     (config, path) => config.getLong(path)
 
-  /** Gets Long from Config. */
-  implicit val GetDouble: GetValue[Double] =
+  /** Gets Double from Config. */
+  implicit val getConfigValueAsDouble: GetConfigValue[Double] =
     (config, path) => config.getDouble(path)
 
   /** Gets Duration from Config. */
-  implicit val GetDuration: GetValue[Duration] =
+  implicit val getConfigValueAsDuration: GetConfigValue[Duration] =
     (config, path) => config.getDuration(path)
 
   /** Gets Period from Config. */
-  implicit val GetPeriod: GetValue[Period] =
+  implicit val getConfigValueAsPeriod: GetConfigValue[Period] =
     (config, path) => config.getPeriod(path)
 
   /** Gets ConfigMemorySize from Config. */
-  implicit val GetMemorySize: GetValue[ConfigMemorySize] =
+  implicit val getConfigValueAsMemorySize: GetConfigValue[ConfigMemorySize] =
     (config, path) => config.getMemorySize(path)
 
   /** Gets collection M[T] from Config. */
-  implicit def GetCollection[T, M[T]](implicit gv: GetValue[T], build: CanBuildFrom[Nothing, T, M[T]]) = new GetValue[M[T]] {
-    def apply(config: Config, path: String): M[T] =
-      config.getList(path).map(x => gv(x.atKey("x"), "x")).to[M]
-  }
+  implicit def getConfigValueAsCollection[T, M[T]](implicit get: GetConfigValue[T], build: CanBuildFrom[Nothing, T, M[T]]) =
+    new GetConfigValue[M[T]] {
+      def apply(config: Config, path: String): M[T] =
+        config.getList(path).map(x => get(x.atKey("x"), "x")).to[M]
+    }
 
   private val enumClass = classOf[Enum[_]]
   private val enumValueOf = enumClass.getMethod("valueOf", classOf[Class[_]], classOf[String])
 
-  /** Gets Enum from Config. */
-  implicit def GetEnum[T <: Enum[T]](implicit ctag: ClassTag[T]) = new GetValue[T] {
-    def apply(config: Config, path: String): T =
-      enumValueOf.invoke(enumClass, ctag.runtimeClass, config.getString(path)).asInstanceOf[T]
-  }
+  /** Creates GetConfigValue for getting Enum from Config. */
+  implicit def getConfigValueAsEnum[T <: Enum[T]](implicit ctag: ClassTag[T]) =
+    new GetConfigValue[T] {
+      def apply(config: Config, path: String): T =
+        enumValueOf.invoke(enumClass, ctag.runtimeClass, config.getString(path)).asInstanceOf[T]
+    }
 
   /** Adds extension methods to {@code com.typesafe.config.Config}. */
   implicit class ConfigType(val config: Config) extends AnyVal {
     /** Gets value of type T at path. */
-    def get[T](path: String)(implicit gv: GetValue[T]): T =
-      gv(config, path)
+    def get[T](path: String)(implicit get: GetConfigValue[T]): T =
+      get(config, path)
 
     /**
      * Gets value of type T at path or returns evaluated default.
      *
-     * <strong>Note:</strong> {@code gv} is invoked only if path exists.
+     * <strong>Note:</strong> {@code get} is invoked only if path exists.
      */
-    def getOrElse[T](path: String, default: => T)(implicit gv: GetValue[T]): T =
-      getOption(path)(gv).getOrElse(default)
+    def getOrElse[T](path: String, default: => T)(implicit get: GetConfigValue[T]): T =
+      getOption(path)(get).getOrElse(default)
 
     /**
      * Optionally gets value of type T at path.
@@ -94,15 +96,15 @@ object Implicits {
      * If path exists, then value of type T wrapped in {@code Option} is
      * returned; otherwise {@code None} is returned.
      *
-     * <strong>Note:</strong> If {@code gv} returned {@code null}, then
+     * <strong>Note:</strong> If {@code get} returned {@code null}, then
      * {@code None} is returned ultimately.
      */
-    def getOption[T](path: String)(implicit gv: GetValue[T]): Option[T] =
-      if (config.hasPath(path)) Option(gv(config, path))
+    def getOption[T](path: String)(implicit get: GetConfigValue[T]): Option[T] =
+      if (config.hasPath(path)) Option(get(config, path))
       else None
 
     /** Tries to get value of type T at path. */
-    def getTry[T](path: String)(implicit gv: GetValue[T]): Try[T] =
-      Try(gv(config, path))
+    def getTry[T](path: String)(implicit get: GetConfigValue[T]): Try[T] =
+      Try(get(config, path))
   }
 }
