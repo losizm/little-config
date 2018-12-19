@@ -1,8 +1,8 @@
 name := "little-config"
-version := "0.3.0"
+version := "0.3.1-SNAPSHOT"
 organization := "com.github.losizm"
 
-scalaVersion := "2.12.6"
+scalaVersion := "2.12.8"
 scalacOptions ++= Seq("-deprecation", "-feature", "-Xcheckinit")
 
 libraryDependencies ++= Seq(
