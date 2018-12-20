@@ -9,27 +9,26 @@ To use **little-config**, start by adding it to your project:
 
 * sbt
 ```scala
-libraryDependencies += "com.github.losizm" %% "little-config" % "0.3.0"
+libraryDependencies += "com.github.losizm" %% "little-config" % "0.3.1"
 ```
 * Gradle
 ```groovy
-compile group: 'com.github.losizm', name: 'little-config_2.12', version: '0.3.0'
+compile group: 'com.github.losizm', name: 'little-config_2.12', version: '0.3.1'
 ```
 * Maven
 ```xml
 <dependency>
   <groupId>com.github.losizm</groupId>
   <artifactId>little-config_2.12</artifactId>
-  <version>0.3.0</version>
+  <version>0.3.1</version>
 </dependency>
 ```
 
-### Using an implementation of com.typesafe.config
-**little-config** is compiled with _com.typesafe.config_ 1.3.x, and you must add
-an implementation to your project.
+### Using Implementation of com.typesafe.config
+**little-config** has a runtime dependency to _com.typesafe.config 1.3.x_, and
+you must add an implementation to your project.
 
-So, for example, include the following in your sbt build to add it as a
-dependency:
+So, for example, add the following to your sbt build to include the dependency:
 
 ```scala
 libraryDependencies += "com.typesafe" % "config" % "1.3.3"
@@ -56,7 +55,6 @@ implicit val getUser: GetConfigValue[User] = (config, path) => {
   User(user.getInt("id"), user.getString("name"))
 }
 
-// Build Config
 val config = ConfigFactory.parseString("""user { id = 0,  name = root }""")
 
 // Get User from Config
@@ -89,8 +87,8 @@ val arrayOfUsers = config.get[Array[User]]("system.users")
 
 ### Getting Optional Value from Config
 
-If you want to get an optional value, **little-config** has you covered. It
-implicitly adds the `getOption[T]` method to `Config`.
+If you want to get an optional value, **little-config** implicitly adds the
+`getOption[T]` method to `Config`.
 
 ```scala
 val config = ConfigFactory.parseString("""user { id = 0,  name = root }""")
@@ -139,14 +137,14 @@ val storage = config.getOrElse("storage", ConfigMemorySize.ofBytes(0))
 ```
 
 In all fairness, there are other ways to achieve this, such as defining default
-values in a reference configuration, or using `Config.withFallback()`. But
-providing a default when getting the value can be a nice alternative at times.
+values in a reference configuration, or using `Config.withFallback()`.
+Nonetheless, providing a default when getting the value is a nice alternative.
 
 ### Trying to Get Value from Config
 
 The `getTry[T]` method is added to `Config` to work in much the same way as
 getting an optional value. It wraps the value in `Success` if the path is
-present and if the value can be converted to the requested type, or otherwise a
+present and if the value can be converted to the requested type; otherwise, a
 `Failure` is returned.
 
 ```scala
@@ -176,10 +174,10 @@ val storage = config.getTry[ConfigMemorySize]("storage")
 
 ### Getting Java Enum Value from Config
 
-And, as a final taste, **little-config** provides an implementation of
-`GetConfigValue` for getting Java enums. This gives you the power of all other
-features discussed, such as getting a list of enums, getting an optional enum,
-getting an enum with a default value, and trying to get an enum.
+To finish off, **little-config** provides an implementation of `GetConfigValue`
+for getting Java enums. This gives you the power of all other features discussed,
+such as getting a list of enums, getting an optional enum, getting an enum with a
+default value, and trying to get an enum.
 
 ```scala
 import java.time.Month
@@ -196,6 +194,11 @@ val last = config.getOption[Month]("last")
 val fall = config.getOrElse("fall", Seq(SEPTEMBER, OCTOBER, NOVEMBER))
 val vacation = config.getTry[Month]("vacation") // :(
 ```
+
+## API Documentation
+
+See [scaladoc](https://losizm.github.io/little-config/latest/api/little/config/index.html)
+for additional details.
 
 ## License
 **little-config** is licensed under the Apache License, Version 2. See LICENSE
