@@ -18,7 +18,30 @@ package little
 import com.typesafe.config.Config
 
 package object config {
-  /** Gets value of type T in Config. */
+  /**
+   * Gets value of type T from Config.
+   *
+   * {{{
+   * import com.typesafe.config.ConfigFactory
+   * import little.config.GetConfigValue
+   * import little.config.Implicits.ConfigType
+   *
+   * case class User(id: Int, name: String)
+   *
+   * // Define how to get User from Config
+   * implicit val getUser: GetConfigValue[User] = { (config, path) =>
+   *   val user = config.getConfig(path)
+   *   User(user.getInt("id"), user.getString("name"))
+   * }
+   *
+   * val config = ConfigFactory.parseString("""user { id = 0,  name = root }""")
+   *
+   * // Get User from Config
+   * val user = config.get[User]("user")
+   * }}}
+   *
+   * @see [[Implicits.ConfigType ConfigType]]
+   */
   trait GetConfigValue[T] {
     /**
      * Gets value of type T at specified path in config.
