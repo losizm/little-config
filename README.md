@@ -9,18 +9,18 @@ To use **little-config**, start by adding it to your project:
 
 * sbt
 ```scala
-libraryDependencies += "com.github.losizm" %% "little-config" % "0.3.1"
+libraryDependencies += "com.github.losizm" %% "little-config" % "0.3.2"
 ```
 * Gradle
 ```groovy
-compile group: 'com.github.losizm', name: 'little-config_2.12', version: '0.3.1'
+compile group: 'com.github.losizm', name: 'little-config_2.12', version: '0.3.2'
 ```
 * Maven
 ```xml
 <dependency>
   <groupId>com.github.losizm</groupId>
   <artifactId>little-config_2.12</artifactId>
-  <version>0.3.1</version>
+  <version>0.3.2</version>
 </dependency>
 ```
 
