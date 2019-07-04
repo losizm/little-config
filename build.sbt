@@ -1,5 +1,5 @@
 name := "little-config"
-version := "0.4.0-SNAPSHOT"
+version := "0.4.0"
 organization := "com.github.losizm"
 
 scalaVersion := "2.13.0"
@@ -37,7 +37,7 @@ developers := List(
   )
 )
 
-description := "The Scala library that provides extension methods to com.typesafe.config"
+description := "The Scala library that provides extension methods to Typesafe Config"
 licenses := List("Apache License, Version 2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 homepage := Some(url("https://github.com/losizm/little-config"))
 
