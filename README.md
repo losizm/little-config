@@ -1,37 +1,24 @@
 # little-config
 
-The Scala library that provides extension methods to _com.typesafe.config_.
+The Scala library that provides extension methods to [Typesafe Config](https://github.com/lightbend/config).
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.github.losizm/little-config_2.12.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.github.losizm%22%20AND%20a:%22little-config_2.12%22)
 
 ## Getting Started
 To use **little-config**, start by adding it to your project:
 
-* sbt
 ```scala
-libraryDependencies += "com.github.losizm" %% "little-config" % "0.3.2"
-```
-* Gradle
-```groovy
-compile group: 'com.github.losizm', name: 'little-config_2.12', version: '0.3.2'
-```
-* Maven
-```xml
-<dependency>
-  <groupId>com.github.losizm</groupId>
-  <artifactId>little-config_2.12</artifactId>
-  <version>0.3.2</version>
-</dependency>
+libraryDependencies += "com.github.losizm" %% "little-config" % "0.4.0"
 ```
 
-### Using Implementation of com.typesafe.config
-**little-config** has a runtime dependency to _com.typesafe.config 1.3.x_, and
+### Using Implementation of Typesafe Config
+**little-config** has a runtime dependency to _Typesafe Config 1.3.x_, and
 you must add an implementation to your project.
 
-So, for example, add the following to your sbt build to include the dependency:
+For example, you could add the following to your build:
 
 ```scala
-libraryDependencies += "com.typesafe" % "config" % "1.3.3"
+libraryDependencies += "com.typesafe" % "config" % "1.3.4"
 ```
 
 ## A Taste of little-config
@@ -39,31 +26,32 @@ Here's a taste of what **little-config** offers.
 
 ### Getting Custom Value from Config
 
-**little-config** is powered by a single trait, `GetConfigValue`. You provide an
+**little-config** is powered by a single trait, `ConfigValuator`. You provide an
 implementation of this to get a custom value from `Config`.
 
 ```scala
 import com.typesafe.config.{ Config, ConfigFactory }
-import little.config.GetConfigValue
+import little.config.ConfigValuator
 import little.config.Implicits._ // Unleash the power
 
 case class User(id: Int, name: String)
 
 // Define how to get User from Config
-implicit val getUser: GetConfigValue[User] = (config, path) => {
-  val user = config.getConfig(path)
-  User(user.getInt("id"), user.getString("name"))
+implicit object UserValuator extends ConfigValuator[User] {
+  def get(config: Config, path: String): User = {
+    val user = config.getConfig(path)
+    User(user.getInt("id"), user.getString("name"))
+  }
 }
 
-val config = ConfigFactory.parseString("""user { id = 0,  name = root }""")
+val config = ConfigFactory.parseString("""user { id = 0, name = root }""")
 
 // Get User from Config
 val user = config.get[User]("user")
 ```
-A special implementation of `GetConfigValue` is available for converting a
+A special implementation of `ConfigValuator` is available for converting a
 `ConfigList` to a collection of custom values. For example, if you define
-`GetConfigValue[User]`, you're automagically provided
-`GetConfigValue[Seq[User]]`.
+`ConfigValuator[User]`, you automagically get `ConfigValuator[Seq[User]]`.
 
 ```scala
 val config = ConfigFactory.parseString("""
@@ -174,7 +162,7 @@ val storage = config.getTry[ConfigMemorySize]("storage")
 
 ### Getting Java Enum Value from Config
 
-To finish off, **little-config** provides an implementation of `GetConfigValue`
+To finish off, **little-config** provides an implementation of `ConfigValuator`
 for getting Java enums. This gives you the power of all other features discussed,
 such as getting a list of enums, getting an optional enum, getting an enum with a
 default value, and trying to get an enum.
