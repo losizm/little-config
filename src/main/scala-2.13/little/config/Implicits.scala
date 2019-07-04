@@ -28,67 +28,67 @@ import com.typesafe.config.{ Config, ConfigMemorySize }
 /** Provides implicit values and types. */
 object Implicits {
   /** Gets String from Config. */
-  implicit val getConfigValueAsString: GetConfigValue[String] =
+  implicit val stringValuator: ConfigValuator[String] =
     (config, path) => config.getString(path)
 
   /** Gets Boolean from Config. */
-  implicit val getConfigValueAsBoolean: GetConfigValue[Boolean] =
+  implicit val booleanValuator: ConfigValuator[Boolean] =
     (config, path) => config.getBoolean(path)
 
   /** Gets Int from Config. */
-  implicit val getConfigValueAsInt: GetConfigValue[Int] =
+  implicit val intValuator: ConfigValuator[Int] =
     (config, path) => config.getInt(path)
 
   /** Gets Long from Config. */
-  implicit val getConfigValueAsLong: GetConfigValue[Long] =
+  implicit val longValuator: ConfigValuator[Long] =
     (config, path) => config.getLong(path)
 
   /** Gets Double from Config. */
-  implicit val getConfigValueAsDouble: GetConfigValue[Double] =
+  implicit val doubleValuator: ConfigValuator[Double] =
     (config, path) => config.getDouble(path)
 
   /** Gets Duration from Config. */
-  implicit val getConfigValueAsDuration: GetConfigValue[Duration] =
+  implicit val durationValuator: ConfigValuator[Duration] =
     (config, path) => config.getDuration(path)
 
   /** Gets Period from Config. */
-  implicit val getConfigValueAsPeriod: GetConfigValue[Period] =
+  implicit val periodValuator: ConfigValuator[Period] =
     (config, path) => config.getPeriod(path)
 
   /** Gets ConfigMemorySize from Config. */
-  implicit val getConfigValueAsMemorySize: GetConfigValue[ConfigMemorySize] =
+  implicit val memorySizeValuator: ConfigValuator[ConfigMemorySize] =
     (config, path) => config.getMemorySize(path)
 
   /** Gets collection M[T] from Config. */
-  implicit def getConfigValueAsCollection[T, M[T]](implicit get: GetConfigValue[T], factory: Factory[T, M[T]]) =
-    new GetConfigValue[M[T]] {
-      def apply(config: Config, path: String): M[T] =
-        config.getList(path).asScala.map(x => get(x.atKey("x"), "x")).to(factory)
+  implicit def collectionValuator[T, M[T]](implicit valuator: ConfigValuator[T], factory: Factory[T, M[T]]) =
+    new ConfigValuator[M[T]] {
+      def get(config: Config, path: String): M[T] =
+        config.getList(path).asScala.map(x => valuator.get(x.atKey("x"), "x")).to(factory)
     }
 
   private val enumClass = classOf[Enum[_]]
   private val enumValueOf = enumClass.getMethod("valueOf", classOf[Class[_]], classOf[String])
 
-  /** Creates GetConfigValue for getting Enum from Config. */
-  implicit def getConfigValueAsEnum[T <: Enum[T]](implicit ctag: ClassTag[T]) =
-    new GetConfigValue[T] {
-      def apply(config: Config, path: String): T =
+  /** Creates ConfigValuator for getting Enum from Config. */
+  implicit def enumValuator[T <: Enum[T]](implicit ctag: ClassTag[T]) =
+    new ConfigValuator[T] {
+      def get(config: Config, path: String): T =
         enumValueOf.invoke(enumClass, ctag.runtimeClass, config.getString(path)).asInstanceOf[T]
     }
 
   /** Adds extension methods to {@code com.typesafe.config.Config}. */
   implicit class ConfigType(val config: Config) extends AnyVal {
     /** Gets value of type T at path. */
-    def get[T](path: String)(implicit get: GetConfigValue[T]): T =
-      get(config, path)
+    def get[T](path: String)(implicit valuator: ConfigValuator[T]): T =
+      valuator.get(config, path)
 
     /**
      * Gets value of type T at path or returns evaluated default.
      *
-     * <strong>Note:</strong> {@code get} is invoked only if path exists.
+     * <strong>Note:</strong> {@code valuator} is invoked only if path exists.
      */
-    def getOrElse[T](path: String, default: => T)(implicit get: GetConfigValue[T]): T =
-      getOption(path)(get).getOrElse(default)
+    def getOrElse[T](path: String, default: => T)(implicit valuator: ConfigValuator[T]): T =
+      getOption(path)(valuator).getOrElse(default)
 
     /**
      * Optionally gets value of type T at path.
@@ -96,15 +96,15 @@ object Implicits {
      * If path exists, then value of type T wrapped in {@code Option} is
      * returned; otherwise {@code None} is returned.
      *
-     * <strong>Note:</strong> If {@code get} returned {@code null}, then
+     * <strong>Note:</strong> If {@code valuator} returned {@code null}, then
      * {@code None} is returned ultimately.
      */
-    def getOption[T](path: String)(implicit get: GetConfigValue[T]): Option[T] =
-      if (config.hasPath(path)) Option(get(config, path))
+    def getOption[T](path: String)(implicit valuator: ConfigValuator[T]): Option[T] =
+      if (config.hasPath(path)) Option(valuator.get(config, path))
       else None
 
-    /** Tries to get value of type T at path. */
-    def getTry[T](path: String)(implicit get: GetConfigValue[T]): Try[T] =
-      Try(get(config, path))
+    /** Tries to valuator value of type T at path. */
+    def getTry[T](path: String)(implicit valuator: ConfigValuator[T]): Try[T] =
+      Try(valuator.get(config, path))
   }
 }
