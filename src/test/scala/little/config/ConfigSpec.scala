@@ -15,6 +15,7 @@
  */
 package little.config
 
+import java.io.File
 import java.time.{ Duration, Period, Month }
 import org.scalatest.FlatSpec
 import com.typesafe.config.{ Config, ConfigFactory, ConfigMemorySize }
@@ -39,6 +40,8 @@ class ConfigSpec extends FlatSpec {
     month = MARCH
     months = [JANUARY, JULY, DECEMBER]
     size = 10K
+    file = "/tmp"
+    files = ["/home/guest", "/", "/usr/local/bin", ""]
   """)
 
   case class User(id: Int, name: String)
@@ -158,5 +161,17 @@ class ConfigSpec extends FlatSpec {
     assert(config.getTry[ConfigMemorySize]("xsize").isFailure)
     assert(config.getTry[List[User]]("xusers").isFailure)
     assert(config.getTry[List[Month]]("xmonths").isFailure)
+  }
+
+  it should "read file" in {
+    assert(config.getFile("file") == new File("/tmp"))
+  }
+
+  it should "read file list" in {
+    val files = config.getFileList("files")
+    assert(files.get(0) == new File("/home/guest"))
+    assert(files.get(1) == new File("/"))
+    assert(files.get(2) == new File("/usr/local/bin"))
+    assert(files.get(3) == new File(""))
   }
 }

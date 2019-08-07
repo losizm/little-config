@@ -15,7 +15,9 @@
  */
 package little.config
 
+import java.io.File
 import java.time.{ Duration, Period }
+import java.{ util => ju }
 
 import scala.collection.convert.ImplicitConversionsToScala.`iterable AsScalaIterable`
 import scala.collection.generic.CanBuildFrom
@@ -59,6 +61,15 @@ object Implicits {
   implicit val memorySizeValuator: ConfigValuator[ConfigMemorySize] =
     (config, path) => config.getMemorySize(path)
 
+  /**
+   * Gets File from Config.
+   *
+   * This is a convenience method that first gets a String value and then
+   * creates a File from it.
+   */
+  implicit val fileValuator: ConfigValuator[File] =
+    (config, path) => new File(config.getString(path))
+
   /** Gets collection M[T] from Config. */
   implicit def collectionValuator[T, M[T]](implicit valuator: ConfigValuator[T], build: CanBuildFrom[Nothing, T, M[T]]) =
     new ConfigValuator[M[T]] {
@@ -78,6 +89,27 @@ object Implicits {
 
   /** Adds extension methods to {@code com.typesafe.config.Config}. */
   implicit class ConfigType(val config: Config) extends AnyVal {
+    /**
+     * Gets value as `File`.
+     *
+     * @param path config path
+     */
+    def getFile(path: String): File =
+      new File(config.getString(path))
+
+    /**
+     * Gets list value as `File` elements.
+     *
+     * @param path config path
+     */
+    def getFileList(path: String): ju.List[File] = {
+      val files = new ju.LinkedList[File]
+      config.getStringList(path).forEach { value =>
+        files.add(new File(value))
+      }
+      files
+    }
+
     /** Gets value of type T at path. */
     def get[T](path: String)(implicit valuator: ConfigValuator[T]): T =
       valuator.get(config, path)
