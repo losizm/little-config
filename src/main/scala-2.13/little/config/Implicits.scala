@@ -135,7 +135,7 @@ object Implicits {
       if (config.hasPath(path)) Option(valuator.get(config, path))
       else None
 
-    /** Tries to valuator value of type T at path. */
+    /** Tries to get value of type T at path. */
     def getTry[T](path: String)(implicit valuator: ConfigValuator[T]): Try[T] =
       Try(valuator.get(config, path))
   }
