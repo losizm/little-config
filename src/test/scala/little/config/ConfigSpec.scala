@@ -54,6 +54,7 @@ class ConfigSpec extends FlatSpec {
 
   val users = Seq(User(0, "root"), User(500, "guest"))
   val months = Seq(JANUARY, JULY, DECEMBER)
+  val files = Seq(new File("/home/guest"), new File("/"), new File("/usr/local/bin"), new File(""))
 
   "Config" should "be read" in {
     assert(config.get[User]("user") == User(0, "root"))
@@ -66,6 +67,7 @@ class ConfigSpec extends FlatSpec {
     assert(config.get[Duration]("duration") == Duration.ofSeconds(10))
     assert(config.get[Period]("period") == Period.ofDays(7))
     assert(config.get[ConfigMemorySize]("size") == ConfigMemorySize.ofBytes(10240))
+    assert(config.get[File]("file") == new File("/tmp"))
 
     assert(config.get[Seq[User]]("users").sameElements(users))
     assert(config.get[List[User]]("users").sameElements(users))
@@ -78,6 +80,12 @@ class ConfigSpec extends FlatSpec {
     assert(config.get[Set[Month]]("months").sameElements(months))
     assert(config.get[Array[Month]]("months").sameElements(months))
     assert(config.get[Iterator[Month]]("months").toSeq.sameElements(months))
+
+    assert(config.get[Seq[File]]("files").sameElements(files))
+    assert(config.get[List[File]]("files").sameElements(files))
+    assert(config.get[Set[File]]("files").sameElements(files))
+    assert(config.get[Array[File]]("files").sameElements(files))
+    assert(config.get[Iterator[File]]("files").toSeq.sameElements(files))
   }
 
   it should "be read with default" in {
