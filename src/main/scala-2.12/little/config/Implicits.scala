@@ -88,7 +88,7 @@ object Implicits {
     }
 
   /** Adds extension methods to {@code com.typesafe.config.Config}. */
-  implicit class ConfigType(val config: Config) extends AnyVal {
+  implicit class ConfigType(private val config: Config) extends AnyVal {
     /**
      * Gets value as `File`.
      *
