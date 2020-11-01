@@ -1,6 +1,6 @@
 organization := "com.github.losizm"
 name         := "little-config"
-version      := "0.7.0-SNAPSHOT"
+version      := "0.7.0"
 
 description  := "The Scala library that provides extension methods to Typesafe Config"
 licenses     := List("Apache License, Version 2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
@@ -21,7 +21,7 @@ Compile / unmanagedSourceDirectories += {
 }
 
 libraryDependencies ++= Seq(
-  "com.typesafe"  %  "config"    % "1.3.3" % "provided",
+  "com.typesafe"  %  "config"    % "1.3.4" % "provided",
   "org.scalatest" %% "scalatest" % "3.2.2" % "test"
 )
 

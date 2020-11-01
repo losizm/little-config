@@ -2,13 +2,13 @@
 
 The Scala library that provides extension methods to [Typesafe Config](https://github.com/lightbend/config).
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.github.losizm/little-config_2.12.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.github.losizm%22%20AND%20a:%22little-config_2.12%22)
+[![Maven Central](https://img.shields.io/maven-central/v/com.github.losizm/little-config_2.13.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22com.github.losizm%22%20AND%20a:%22little-config_2.13%22)
 
 ## Getting Started
 To use **little-config**, start by adding it to your project:
 
 ```scala
-libraryDependencies += "com.github.losizm" %% "little-config" % "0.6.0"
+libraryDependencies += "com.github.losizm" %% "little-config" % "0.7.0"
 ```
 
 ### Using Implementation of Typesafe Config
