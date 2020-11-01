@@ -22,7 +22,7 @@ Compile / unmanagedSourceDirectories += {
 
 libraryDependencies ++= Seq(
   "com.typesafe"  %  "config"    % "1.3.3" % "provided",
-  "org.scalatest" %% "scalatest" % "3.0.8" % "test"
+  "org.scalatest" %% "scalatest" % "3.2.2" % "test"
 )
 
 scmInfo := Some(

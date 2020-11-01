@@ -17,13 +17,12 @@ package little.config
 
 import java.io.File
 import java.time.{ Duration, Period, Month }
-import org.scalatest.FlatSpec
 import com.typesafe.config.{ Config, ConfigFactory, ConfigMemorySize }
 
 import Implicits._ 
 import Month._
 
-class ConfigSpec extends FlatSpec {
+class ConfigSpec extends org.scalatest.flatspec.AnyFlatSpec {
   val config = ConfigFactory.parseString("""
     user { id = 0,  name = root }
     users = [
@@ -69,23 +68,23 @@ class ConfigSpec extends FlatSpec {
     assert(config.get[ConfigMemorySize]("size") == ConfigMemorySize.ofBytes(10240))
     assert(config.get[File]("file") == new File("/tmp"))
 
-    assert(config.get[Seq[User]]("users").sameElements(users))
-    assert(config.get[List[User]]("users").sameElements(users))
-    assert(config.get[Set[User]]("users").sameElements(users))
-    assert(config.get[Array[User]]("users").sameElements(users))
-    assert(config.get[Iterator[User]]("users").toSeq.sameElements(users))
+    assert(config.get[Seq[User]]("users") == users)
+    assert(config.get[List[User]]("users") == users)
+    assert(config.get[Set[User]]("users") == users.toSet)
+    assert(config.get[Array[User]]("users") sameElements users)
+    assert(config.get[Iterator[User]]("users") sameElements users.iterator)
 
-    assert(config.get[Seq[Month]]("months").sameElements(months))
-    assert(config.get[List[Month]]("months").sameElements(months))
-    assert(config.get[Set[Month]]("months").sameElements(months))
-    assert(config.get[Array[Month]]("months").sameElements(months))
-    assert(config.get[Iterator[Month]]("months").toSeq.sameElements(months))
+    assert(config.get[Seq[Month]]("months").toSeq == months)
+    assert(config.get[List[Month]]("months").toSeq == months)
+    assert(config.get[Set[Month]]("months") == months.toSet)
+    assert(config.get[Array[Month]]("months") sameElements months)
+    assert(config.get[Iterator[Month]]("months") sameElements months.iterator)
 
-    assert(config.get[Seq[File]]("files").sameElements(files))
-    assert(config.get[List[File]]("files").sameElements(files))
-    assert(config.get[Set[File]]("files").sameElements(files))
-    assert(config.get[Array[File]]("files").sameElements(files))
-    assert(config.get[Iterator[File]]("files").toSeq.sameElements(files))
+    assert(config.get[Seq[File]]("files").toSeq == files)
+    assert(config.get[List[File]]("files").toSeq == files)
+    assert(config.get[Set[File]]("files") == files.toSet)
+    assert(config.get[Array[File]]("files") sameElements files)
+    assert(config.get[Iterator[File]]("files") sameElements files.iterator)
   }
 
   it should "be read with default" in {
