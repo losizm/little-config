@@ -189,5 +189,5 @@ See [scaladoc](https://losizm.github.io/little-config/latest/api/little/config/i
 for additional details.
 
 ## License
-**little-config** is licensed under the Apache License, Version 2. See LICENSE
-file for more information.
+**little-config** is licensed under the Apache License, Version 2. See [LICENSE](LICENSE)
+for more information.
