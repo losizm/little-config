@@ -59,6 +59,10 @@ object Implicits {
   implicit val memorySizeValuator: ConfigValuator[ConfigMemorySize] =
     (config, path) => config.getMemorySize(path)
 
+  /** Gets `Config` from config. */
+  implicit val configValuator: ConfigValuator[Config] =
+    (config, path) => config.getConfig(path)
+
   /**
    * Gets `File` from config.
    *

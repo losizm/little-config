@@ -17,7 +17,9 @@ package little.config
 
 import java.io.File
 import java.time.{ Duration, Period, Month }
+
 import com.typesafe.config.{ Config, ConfigFactory, ConfigMemorySize }
+import ConfigFactory.{ parseString => ConfigString }
 
 import Implicits._ 
 import Month._
@@ -52,11 +54,13 @@ class ConfigSpec extends org.scalatest.flatspec.AnyFlatSpec {
   }
 
   val users = Seq(User(0, "root"), User(500, "guest"))
+  val usersConfig = Seq(ConfigString("{ id = 0,  name = root }"), ConfigString("{ id = 500,  name = guest }"))
   val months = Seq(JANUARY, JULY, DECEMBER)
   val files = Seq(new File("/home/guest"), new File("/"), new File("/usr/local/bin"), new File(""))
 
   "Config" should "be read" in {
     assert(config.get[User]("user") == User(0, "root"))
+    assert(config.get[Config]("user") == ConfigString("{ id = 0,  name = root }"))
     assert(config.get[Month]("month") == MARCH)
     assert(config.get[String]("string") == "hello")
     assert(config.get[Boolean]("boolean") == true)
@@ -74,6 +78,12 @@ class ConfigSpec extends org.scalatest.flatspec.AnyFlatSpec {
     assert(config.get[Array[User]]("users") sameElements users)
     assert(config.get[Iterator[User]]("users") sameElements users.iterator)
 
+    assert(config.get[Seq[Config]]("users") == usersConfig)
+    assert(config.get[List[Config]]("users") == usersConfig)
+    assert(config.get[Set[Config]]("users") == usersConfig.toSet)
+    assert(config.get[Array[Config]]("users") sameElements usersConfig)
+    assert(config.get[Iterator[Config]]("users") sameElements usersConfig.iterator)
+
     assert(config.get[Seq[Month]]("months").toSeq == months)
     assert(config.get[List[Month]]("months").toSeq == months)
     assert(config.get[Set[Month]]("months") == months.toSet)
@@ -89,6 +99,7 @@ class ConfigSpec extends org.scalatest.flatspec.AnyFlatSpec {
 
   it should "be read with default" in {
     assert(config.getOrElse("user", User(500, "guest")) == User(0, "root"))
+    assert(config.getOrElse("user", ConfigString("{ id = 500, name = guest }")) == ConfigString("{ id = 0,  name = root }"))
     assert(config.getOrElse("month", OCTOBER) == MARCH)
     assert(config.getOrElse("string", "") == "hello")
     assert(config.getOrElse("boolean", false) == true)
@@ -102,6 +113,7 @@ class ConfigSpec extends org.scalatest.flatspec.AnyFlatSpec {
     assert(config.getOrElse("months", List[Month]()).sameElements(months))
 
     assert(config.getOrElse("xuser", User(500, "guest")) == User(500, "guest"))
+    assert(config.getOrElse("xuser", ConfigString("{ id = 500, name = guest }")) == ConfigString("{ id = 500, name = guest }"))
     assert(config.getOrElse("xmonth", OCTOBER) == OCTOBER)
     assert(config.getOrElse("xstring", "") == "")
     assert(config.getOrElse("xboolean", false) == false)
@@ -117,6 +129,7 @@ class ConfigSpec extends org.scalatest.flatspec.AnyFlatSpec {
 
   it should "be optionally read" in {
     assert(config.getOption[User]("user").contains(User(0, "root")))
+    assert(config.getOption[Config]("user").contains(config.getConfig("user")))
     assert(config.getOption[Month]("month").contains(MARCH))
     assert(config.getOption[String]("string").contains("hello"))
     assert(config.getOption[Boolean]("boolean").contains(true))
@@ -127,9 +140,11 @@ class ConfigSpec extends org.scalatest.flatspec.AnyFlatSpec {
     assert(config.getOption[Period]("period").contains(Period.ofDays(7)))
     assert(config.getOption[ConfigMemorySize]("size").contains(ConfigMemorySize.ofBytes(10240)))
     assert(config.getOption[Seq[User]]("users").contains(users))
+    assert(config.getOption[Seq[Config]]("users").contains(usersConfig))
     assert(config.getOption[Seq[Month]]("months").contains(months))
 
     assert(config.getOption[User]("xuser") == None)
+    assert(config.getOption[Config]("xuser") == None)
     assert(config.getOption[String]("xstring") == None)
     assert(config.getOption[Boolean]("xboolean") == None)
     assert(config.getOption[Int]("xint") == None)
@@ -139,11 +154,13 @@ class ConfigSpec extends org.scalatest.flatspec.AnyFlatSpec {
     assert(config.getOption[Period]("xperiod") == None)
     assert(config.getOption[ConfigMemorySize]("xsize") == None)
     assert(config.getOption[List[User]]("xusers") == None)
+    assert(config.getOption[List[Config]]("xusers") == None)
     assert(config.getOption[List[Month]]("xmonths") == None)
   }
 
   it should "try to be read" in {
     assert(config.getTry[User]("user").get == User(0, "root"))
+    assert(config.getTry[Config]("user").get == ConfigString("{ id = 0,  name = root }"))
     assert(config.getTry[Month]("month").get == MARCH)
     assert(config.getTry[String]("string").get == "hello")
     assert(config.getTry[Boolean]("boolean").get == true)
@@ -154,9 +171,11 @@ class ConfigSpec extends org.scalatest.flatspec.AnyFlatSpec {
     assert(config.getTry[Period]("period").get == Period.ofDays(7))
     assert(config.getTry[ConfigMemorySize]("size").get == ConfigMemorySize.ofBytes(10240))
     assert(config.getTry[Seq[User]]("users").get.sameElements(users))
+    assert(config.getTry[Seq[Config]]("users").get.sameElements(usersConfig))
     assert(config.getTry[Seq[Month]]("months").get.sameElements(months))
 
     assert(config.getTry[User]("xuser").isFailure)
+    assert(config.getTry[Config]("xuser").isFailure)
     assert(config.getTry[Month]("xmonth").isFailure)
     assert(config.getTry[String]("xstring").isFailure)
     assert(config.getTry[Boolean]("xboolean").isFailure)
@@ -167,6 +186,7 @@ class ConfigSpec extends org.scalatest.flatspec.AnyFlatSpec {
     assert(config.getTry[Period]("xperiod").isFailure)
     assert(config.getTry[ConfigMemorySize]("xsize").isFailure)
     assert(config.getTry[List[User]]("xusers").isFailure)
+    assert(config.getTry[List[Config]]("xusers").isFailure)
     assert(config.getTry[List[Month]]("xmonths").isFailure)
   }
 
