@@ -6,8 +6,8 @@ description  := "The Scala library that provides extension methods to Typesafe C
 licenses     := List("Apache License, Version 2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
 homepage     := Some(url("https://github.com/losizm/little-config"))
 
-scalaVersion := "2.13.3"
-crossScalaVersions := Seq("2.12.12")
+scalaVersion := "2.13.6"
+crossScalaVersions := Seq("2.12.14")
 
 scalacOptions ++= Seq("-deprecation", "-feature", "-Xcheckinit")
 
@@ -22,7 +22,7 @@ Compile / unmanagedSourceDirectories += {
 
 libraryDependencies ++= Seq(
   "com.typesafe"  %  "config"    % "1.3.4" % "provided",
-  "org.scalatest" %% "scalatest" % "3.2.2" % "test"
+  "org.scalatest" %% "scalatest" % "3.2.9" % "test"
 )
 
 scmInfo := Some(
