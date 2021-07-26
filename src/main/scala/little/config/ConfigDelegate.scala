@@ -18,17 +18,17 @@ package little.config
 import com.typesafe.config.Config
 
 /**
- * Gets `T` value from config.
+ * Gets `T` from config.
  *
  * {{{
  *  import com.typesafe.config.{ Config, ConfigFactory }
- *  import little.config.ConfigValuator
+ *  import little.config.ConfigDelegate
  *  import little.config.Implicits.ConfigType
  *
  *  case class User(id: Int, name: String)
  *
  *  // Define how to get User from Config
- *  given ConfigValuator[User] with
+ *  given ConfigDelegate[User] with
  *    def get(config: Config, path: String): User =
  *      val user = config.getConfig(path)
  *      User(user.getInt("id"), user.getString("name"))
@@ -42,9 +42,9 @@ import com.typesafe.config.Config
  * @see [[Implicits.ConfigType ConfigType]]
  */
 @FunctionalInterface
-trait ConfigValuator[T]:
+trait ConfigDelegate[T]:
   /**
-   * Gets `T` value at specified path in config.
+   * Gets `T` at specified path in config.
    *
    * @param config config from which to get value
    * @param path path at which to get value

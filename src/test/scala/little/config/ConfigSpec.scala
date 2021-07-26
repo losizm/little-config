@@ -48,7 +48,7 @@ class ConfigSpec extends org.scalatest.flatspec.AnyFlatSpec:
   case class User(id: Int, name: String)
 
   // Define how to get User from Config
-  given ConfigValuator[User] = (config, path) =>
+  given ConfigDelegate[User] = (config, path) =>
     val user = config.getConfig(path)
     User(user.getInt("id"), user.getString("name"))
 

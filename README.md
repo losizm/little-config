@@ -26,18 +26,18 @@ Here's a taste of what **little-config** offers.
 
 ### Getting Custom Value from Config
 
-**little-config** is powered by a single trait, `ConfigValuator`. You provide an
+**little-config** is powered by a single trait, `ConfigDelegate`. You provide an
 implementation of this to get a custom value from `Config`.
 
 ```scala
 import com.typesafe.config.{ Config, ConfigFactory }
-import little.config.ConfigValuator
+import little.config.ConfigDelegate
 import little.config.Implicits.{ *, given }
 
 case class User(id: Int, name: String)
 
 // Define how to get User from Config
-given ConfigValuator[User] with
+given ConfigDelegate[User] with
   def get(config: Config, path: String): User =
     val user = config.getConfig(path)
     User(user.getInt("id"), user.getString("name"))
@@ -47,9 +47,9 @@ val config = ConfigFactory.parseString("""user { id = 0, name = root }""")
 // Get User from Config
 val user = config.get[User]("user")
 ```
-A special implementation of `ConfigValuator` is available for converting a
+A special implementation of `ConfigDelegate` is available for converting a
 `ConfigList` to a collection of custom values. For example, if you define
-`ConfigValuator[User]`, you automagically get `ConfigValuator[Seq[User]]`.
+`ConfigDelegate[User]`, you automatically get `ConfigDelegate[Seq[User]]`.
 
 ```scala
 val config = ConfigFactory.parseString("""
@@ -122,10 +122,6 @@ val retention = config.getOrElse("retention", Period.ofWeeks(1))
 val storage   = config.getOrElse("storage", ConfigMemorySize.ofBytes(0))
 ```
 
-In all fairness, there are other ways to achieve this, such as defining default
-values in a reference configuration, or using `Config.withFallback()`.
-Nonetheless, providing a default when getting the value is a nice alternative.
-
 ### Trying to Get Value from Config
 
 The `getTry[T]` method is added to `Config` to work in much the same way as
@@ -160,7 +156,7 @@ val storage   = config.getTry[ConfigMemorySize]("storage")
 
 ### Getting Java Enum Value from Config
 
-To finish off, **little-config** provides an implementation of `ConfigValuator`
+To finish off, **little-config** provides an implementation of `ConfigDelegate`
 for getting Java enums. This gives you the power of all other features discussed,
 such as getting a list of enums, getting an optional enum, getting an enum with a
 default value, and trying to get an enum.

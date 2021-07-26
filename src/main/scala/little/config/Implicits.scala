@@ -30,39 +30,39 @@ import com.typesafe.config.{ Config, ConfigMemorySize }
 /** Provides implicit conversions and extension methods. */
 object Implicits:
   /** Gets `String` from config. */
-  given stringValuator: ConfigValuator[String] with
+  given stringDelegate: ConfigDelegate[String] with
     def get(config: Config, path: String) = config.getString(path)
 
   /** Gets `Boolean` from config. */
-  given booleanValuator: ConfigValuator[Boolean] with
+  given booleanDelegate: ConfigDelegate[Boolean] with
     def get(config: Config, path: String) = config.getBoolean(path)
 
   /** Gets `Int` from config. */
-  given intValuator: ConfigValuator[Int] with
+  given intDelegate: ConfigDelegate[Int] with
     def get(config: Config, path: String) = config.getInt(path)
 
   /** Gets `Long` from config. */
-  given longValuator: ConfigValuator[Long] with
+  given longDelegate: ConfigDelegate[Long] with
     def get(config: Config, path: String) = config.getLong(path)
 
   /** Gets `Double` from config. */
-  given doubleValuator: ConfigValuator[Double] with
+  given doubleDelegate: ConfigDelegate[Double] with
     def get(config: Config, path: String) = config.getDouble(path)
 
   /** Gets `Duration` from config. */
-  given durationValuator: ConfigValuator[Duration] with
+  given durationDelegate: ConfigDelegate[Duration] with
     def get(config: Config, path: String) = config.getDuration(path)
 
   /** Gets `Period` from config. */
-  given periodValuator: ConfigValuator[Period] with
+  given periodDelegate: ConfigDelegate[Period] with
     def get(config: Config, path: String) = config.getPeriod(path)
 
   /** Gets `ConfigMemorySize` from config. */
-  given memorySizeValuator: ConfigValuator[ConfigMemorySize] with
+  given memorySizeDelegate: ConfigDelegate[ConfigMemorySize] with
     def get(config: Config, path: String) = config.getMemorySize(path)
 
   /** Gets `Config` from config. */
-  given configValuator: ConfigValuator[Config] with
+  given configDelegate: ConfigDelegate[Config] with
     def get(config: Config, path: String) = config.getConfig(path)
 
   /**
@@ -70,23 +70,23 @@ object Implicits:
    *
    * @note This gets a `String` and uses it as a pathname to create a `File`.
    */
-  given fileValuator: ConfigValuator[File] with
+  given fileDelegate: ConfigDelegate[File] with
     def get(config: Config, path: String) = File(config.getString(path))
 
   /** Gets collection `M[T]` from config. */
-  given collectionValuator[T, M[T]](using valuator: ConfigValuator[T], factory: Factory[T, M[T]]): ConfigValuator[M[T]] =
-    new ConfigValuator[M[T]]:
+  given collectionDelegate[T, M[T]](using delegate: ConfigDelegate[T])(using factory: Factory[T, M[T]]): ConfigDelegate[M[T]] =
+    new ConfigDelegate[M[T]]:
       def get(config: Config, path: String): M[T] =
         asScala(config.getList(path))
-          .map(x => valuator.get(x.atKey("x"), "x"))
+          .map(x => delegate.get(x.atKey("x"), "x"))
           .to(factory)
 
   private val enumClass = classOf[Enum[_]]
   private val enumValueOf = enumClass.getMethod("valueOf", classOf[Class[_]], classOf[String])
 
-  /** Creates `ConfigValuator` for getting `Enum` from config. */
-  given enumValuator[T <: Enum[T]](using ctag: ClassTag[T]): ConfigValuator[T] =
-    new ConfigValuator[T]:
+  /** Creates `ConfigDelegate` for getting `Enum` from config. */
+  given enumDelegate[T <: Enum[T]](using ctag: ClassTag[T]): ConfigDelegate[T] =
+    new ConfigDelegate[T]:
       def get(config: Config, path: String): T =
         enumValueOf.invoke(enumClass, ctag.runtimeClass, config.getString(path)).asInstanceOf[T]
 
@@ -112,29 +112,29 @@ object Implicits:
       }
       files
 
-    /** Gets `T` value at path. */
-    def get[T](path: String)(using valuator: ConfigValuator[T]): T =
-      valuator.get(config, path)
+    /** Gets `T` at path. */
+    def get[T](path: String)(using delegate: ConfigDelegate[T]): T =
+      delegate.get(config, path)
 
     /**
-     * Gets `T` value at path or returns `default`.
+     * Gets `T` at path or returns `default`.
      *
-     * @note `valuator` is invoked only if path exists.
+     * @note `delegate` is invoked only if path exists.
      */
-    def getOrElse[T](path: String, default: => T)(using valuator: ConfigValuator[T]): T =
-      getOption(path)(using valuator).getOrElse(default)
+    def getOrElse[T](path: String, default: => T)(using delegate: ConfigDelegate[T]): T =
+      getOption(path)(using delegate).getOrElse(default)
 
     /**
-     * Optionally gets `T` value at path.
+     * Optionally gets `T` at path.
      *
      * If path exists, then its value is wrapped in an `Option` and returned;
-     * otherwise `None` is returned.
+     * otherwise, `None` is returned.
      */
-    def getOption[T](path: String)(using valuator: ConfigValuator[T]): Option[T] =
+    def getOption[T](path: String)(using delegate: ConfigDelegate[T]): Option[T] =
       config.hasPath(path) match
-        case true  => Option(valuator.get(config, path))
+        case true  => Option(delegate.get(config, path))
         case false => None
 
-    /** Tries to get `T` value at path. */
-    def getTry[T](path: String)(using valuator: ConfigValuator[T]): Try[T] =
-      Try(valuator.get(config, path))
+    /** Tries to get `T` at path. */
+    def getTry[T](path: String)(using delegate: ConfigDelegate[T]): Try[T] =
+      Try(delegate.get(config, path))
