@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Carlos Conyers
+ * Copyright 2021 Carlos Conyers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,10 @@ import java.time.{ Duration, Period, Month }
 import com.typesafe.config.{ Config, ConfigFactory, ConfigMemorySize }
 import ConfigFactory.{ parseString => ConfigString }
 
-import Implicits._ 
-import Month._
+import Implicits.{ *, given }
+import Month.*
 
-class ConfigSpec extends org.scalatest.flatspec.AnyFlatSpec {
+class ConfigSpec extends org.scalatest.flatspec.AnyFlatSpec:
   val config = ConfigFactory.parseString("""
     user { id = 0,  name = root }
     users = [
@@ -48,15 +48,14 @@ class ConfigSpec extends org.scalatest.flatspec.AnyFlatSpec {
   case class User(id: Int, name: String)
 
   // Define how to get User from Config
-  implicit val getUser: ConfigValuator[User] = (config, path) => {
+  given ConfigValuator[User] = (config, path) =>
     val user = config.getConfig(path)
     User(user.getInt("id"), user.getString("name"))
-  }
 
   val users = Seq(User(0, "root"), User(500, "guest"))
   val usersConfig = Seq(ConfigString("{ id = 0,  name = root }"), ConfigString("{ id = 500,  name = guest }"))
   val months = Seq(JANUARY, JULY, DECEMBER)
-  val files = Seq(new File("/home/guest"), new File("/"), new File("/usr/local/bin"), new File(""))
+  val files = Seq(File("/home/guest"), File("/"), File("/usr/local/bin"), File(""))
 
   "Config" should "be read" in {
     assert(config.get[User]("user") == User(0, "root"))
@@ -70,7 +69,7 @@ class ConfigSpec extends org.scalatest.flatspec.AnyFlatSpec {
     assert(config.get[Duration]("duration") == Duration.ofSeconds(10))
     assert(config.get[Period]("period") == Period.ofDays(7))
     assert(config.get[ConfigMemorySize]("size") == ConfigMemorySize.ofBytes(10240))
-    assert(config.get[File]("file") == new File("/tmp"))
+    assert(config.get[File]("file") == File("/tmp"))
 
     assert(config.get[Seq[User]]("users") == users)
     assert(config.get[List[User]]("users") == users)
@@ -191,14 +190,13 @@ class ConfigSpec extends org.scalatest.flatspec.AnyFlatSpec {
   }
 
   it should "read file" in {
-    assert(config.getFile("file") == new File("/tmp"))
+    assert(config.getFile("file") == File("/tmp"))
   }
 
   it should "read file list" in {
     val files = config.getFileList("files")
-    assert(files.get(0) == new File("/home/guest"))
-    assert(files.get(1) == new File("/"))
-    assert(files.get(2) == new File("/usr/local/bin"))
-    assert(files.get(3) == new File(""))
+    assert(files.get(0) == File("/home/guest"))
+    assert(files.get(1) == File("/"))
+    assert(files.get(2) == File("/usr/local/bin"))
+    assert(files.get(3) == File(""))
   }
-}

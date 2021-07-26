@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Carlos Conyers
+ * Copyright 2021 Carlos Conyers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,30 +21,28 @@ import com.typesafe.config.Config
  * Gets `T` value from config.
  *
  * {{{
- * import com.typesafe.config.{ Config, ConfigFactory }
- * import little.config.ConfigValuator
- * import little.config.Implicits.ConfigType
+ *  import com.typesafe.config.{ Config, ConfigFactory }
+ *  import little.config.ConfigValuator
+ *  import little.config.Implicits.ConfigType
  *
- * case class User(id: Int, name: String)
+ *  case class User(id: Int, name: String)
  *
- * // Define how to get User from Config
- * implicit object UserValuator extends ConfigValuator[User] {
- *   def get(config: Config, path: String): User = {
- *     val user = config.getConfig(path)
+ *  // Define how to get User from Config
+ *  given ConfigValuator[User] with
+ *    def get(config: Config, path: String): User =
+ *      val user = config.getConfig(path)
+ *      User(user.getInt("id"), user.getString("name"))
  *
- *     User(user.getInt("id"), user.getString("name"))
- *   }
- * }
+ *  val config = ConfigFactory.parseString("user { id = 0, name = root }")
  *
- * val config = ConfigFactory.parseString("user { id = 0, name = root }")
- *
- * // Get User from Config
- * val user = config.get[User]("user")
+ *  // Get User from Config
+ *  val user = config.get[User]("user")
  * }}}
  *
  * @see [[Implicits.ConfigType ConfigType]]
  */
-trait ConfigValuator[T] {
+@FunctionalInterface
+trait ConfigValuator[T]:
   /**
    * Gets `T` value at specified path in config.
    *
@@ -52,4 +50,3 @@ trait ConfigValuator[T] {
    * @param path path at which to get value
    */
   def get(config: Config, path: String): T
-}
