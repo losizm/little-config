@@ -29,7 +29,7 @@ Here's a taste of what **little-config** offers.
 
 ### Getting Custom Value from Config
 
-**little-config** is powered by a single trait, `ConfigDelegate`. You provide an
+**little-config** is powered by a single trait: `ConfigDelegate`. You provide an
 implementation of this to get a custom value from `Config`.
 
 ```scala
@@ -129,7 +129,7 @@ val storage   = config.getOrElse("storage", ConfigMemorySize.ofBytes(0))
 
 The `getTry[T]` method is added to `Config` to work in much the same way as
 getting an optional value. It wraps the value in `Success` if the path is
-present and if the value can be converted to the requested type; otherwise, a
+present and the value can be converted to the requested type; otherwise, a
 `Failure` is returned.
 
 ```scala
@@ -160,9 +160,9 @@ val storage   = config.getTry[ConfigMemorySize]("storage")
 ### Getting Java Enum Value from Config
 
 To finish off, **little-config** provides an implementation of `ConfigDelegate`
-for getting Java enums. This gives you the power of all other features discussed,
-such as getting a list of enums, getting an optional enum, getting an enum with a
-default value, and trying to get an enum.
+for getting Java enums. This gives you the power of the previous features
+discussed, such as getting a list of enums, getting an optional enum, getting an
+enum with a default value, and trying to get an enum.
 
 ```scala
 import java.time.Month, Month.*
