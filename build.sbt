@@ -1,6 +1,6 @@
 organization := "com.github.losizm"
 name         := "little-config"
-version      := "1.0.0"
+version      := "2.0.0-SNAPSHOT"
 
 description  := "The Scala library that provides extension methods to Typesafe Config"
 licenses     := List("Apache License, Version 2" -> url("http://www.apache.org/licenses/LICENSE-2.0.txt"))
