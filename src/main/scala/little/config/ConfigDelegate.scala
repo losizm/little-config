@@ -22,8 +22,7 @@ import com.typesafe.config.Config
  *
  * {{{
  *  import com.typesafe.config.{ Config, ConfigFactory }
- *  import little.config.ConfigDelegate
- *  import little.config.Implicits.ConfigType
+ *  import little.config.{ ConfigDelegate, ConfigExt }
  *
  *  case class User(id: Int, name: String)
  *
@@ -38,8 +37,6 @@ import com.typesafe.config.Config
  *  // Get User from Config
  *  val user = config.get[User]("user")
  * }}}
- *
- * @see [[Implicits.ConfigType ConfigType]]
  */
 @FunctionalInterface
 trait ConfigDelegate[T]:

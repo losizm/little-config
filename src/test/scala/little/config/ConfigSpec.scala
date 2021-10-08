@@ -21,7 +21,6 @@ import java.time.{ Duration, Period, Month }
 import com.typesafe.config.{ Config, ConfigFactory, ConfigMemorySize }
 import ConfigFactory.{ parseString => ConfigString }
 
-import Implicits.{ *, given }
 import Month.*
 
 class ConfigSpec extends org.scalatest.flatspec.AnyFlatSpec:
