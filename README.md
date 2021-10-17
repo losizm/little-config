@@ -8,7 +8,7 @@ The Scala library that provides extension methods to [Typesafe Config](https://g
 To get started, add **little-config** to your project:
 
 ```scala
-libraryDependencies += "com.github.losizm" %% "little-config" % "1.0.0"
+libraryDependencies += "com.github.losizm" %% "little-config" % "2.0.0"
 ```
 _**NOTE:** Starting with version 1.0, **little-config** is written for Scala 3
 exclusively. See previous releases for compatibility with Scala 2.12 and Scala
@@ -34,8 +34,7 @@ implementation of this to get a custom value from `Config`.
 
 ```scala
 import com.typesafe.config.{ Config, ConfigFactory }
-import little.config.ConfigDelegate
-import little.config.Implicits.{ *, given }
+import little.config.{ *, given }
 
 case class User(id: Int, name: String)
 
