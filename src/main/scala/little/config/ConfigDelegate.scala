@@ -22,7 +22,7 @@ import com.typesafe.config.Config
  *
  * {{{
  *  import com.typesafe.config.{ Config, ConfigFactory }
- *  import little.config.{ ConfigDelegate, ConfigExt }
+ *  import little.config.{ ConfigDelegate, ConfigMethods }
  *
  *  case class User(id: Int, name: String)
  *

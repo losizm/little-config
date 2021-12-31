@@ -16,14 +16,14 @@
 package little.config
 
 import java.io.File
-import java.{ util => ju }
+import java.util as ju
 
 import scala.util.Try
 
 import com.typesafe.config.Config
 
-/** Adds extension methods to `com.typesafe.config.Config`. */
-implicit class ConfigExt(config: Config) extends AnyVal:
+/** Provides extension methods for `com.typesafe.config.Config`. */
+implicit class ConfigMethods(config: Config) extends AnyVal:
   /**
    * Gets value as `File`.
    *
