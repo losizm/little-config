@@ -8,7 +8,7 @@ The Scala library that provides extension methods for [Typesafe Config](https://
 To get started, add **little-config** to your project:
 
 ```scala
-libraryDependencies += "com.github.losizm" %% "little-config" % "3.0.0"
+libraryDependencies += "com.github.losizm" %% "little-config" % "4.0.0"
 ```
 _**NOTE:** Starting with version 1.0, **little-config** is written for Scala 3
 exclusively. See previous releases for compatibility with Scala 2.12 and Scala
