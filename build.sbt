@@ -7,9 +7,9 @@ homepage     := Some(url("https://github.com/losizm/little-config"))
 
 versionScheme := Some("early-semver")
 
-scalaVersion := "3.1.0"
+scalaVersion := "3.1.2"
 
-scalacOptions := Seq("-deprecation", "-feature", "-new-syntax", "-Xfatal-warnings", "-Yno-experimental")
+scalacOptions := Seq("-deprecation", "-feature", "-new-syntax", "-Werror", "-Yno-experimental")
 
 Compile / doc / scalacOptions := Seq(
   "-project", name.value,
@@ -18,7 +18,7 @@ Compile / doc / scalacOptions := Seq(
 
 libraryDependencies ++= Seq(
   "com.typesafe"  %  "config"    % "1.4.1"  % "provided",
-  "org.scalatest" %% "scalatest" % "3.2.10" % "test"
+  "org.scalatest" %% "scalatest" % "3.2.12" % "test"
 )
 
 scmInfo := Some(
