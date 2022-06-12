@@ -14,7 +14,6 @@ _**NOTE:** Starting with version 1.0, **little-config** is written for Scala 3
 exclusively. See previous releases for compatibility with Scala 2.12 and Scala
 2.13._
 
-### Using Implementation of Typesafe Config
 **little-config** has a runtime dependency to _Typesafe Config 1.4.x_, and
 you must add an implementation to your project.
 

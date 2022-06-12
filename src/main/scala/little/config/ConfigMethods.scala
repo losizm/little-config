@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Carlos Conyers
+ * Copyright 2022 Carlos Conyers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import com.typesafe.config.Config
 /** Provides extension methods for `com.typesafe.config.Config`. */
 implicit class ConfigMethods(config: Config) extends AnyVal:
   /**
-   * Gets value as `File`.
+   * Gets `File` at path.
    *
    * @param path config path
    */
@@ -33,7 +33,7 @@ implicit class ConfigMethods(config: Config) extends AnyVal:
     File(config.getString(path))
 
   /**
-   * Gets value as `java.util.List[File]`.
+   * Gets `java.util.List[File]` at path.
    *
    * @param path config path
    */
@@ -57,16 +57,20 @@ implicit class ConfigMethods(config: Config) extends AnyVal:
     getOption(path)(using delegate).getOrElse(default)
 
   /**
-   * Optionally gets `T` at path.
+   * Gets `Option[T]` at path.
    *
-   * If path exists, then its value is wrapped in an `Option` and returned;
-   * otherwise, `None` is returned.
+   * @note `delegate` is invoked only if path exists.
    */
   def getOption[T](path: String)(using delegate: ConfigDelegate[T]): Option[T] =
     config.hasPath(path) match
       case true  => Option(delegate.get(config, path))
       case false => None
 
-  /** Tries to get `T` at path. */
+  /**
+   * Gets `Try[T]` at path.
+   *
+   * @return `Success[T]` if path exists and its value is successfully
+   * converted; `Failure` otherwise
+   */
   def getTry[T](path: String)(using delegate: ConfigDelegate[T]): Try[T] =
     Try(delegate.get(config, path))

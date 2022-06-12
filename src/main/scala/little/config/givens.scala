@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 Carlos Conyers
+ * Copyright 2022 Carlos Conyers
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ package little.config
 
 import java.io.File
 import java.time.{ Duration, Period }
-import java.{ util => ju }
+import java.util as ju
 
 import scala.collection.Factory
 import scala.jdk.javaapi.CollectionConverters.asScala
